@@ -2,6 +2,7 @@
 
 This matrix is intentionally compact at project foundation. Before implementation,
 Sprint 1 ranges are expanded to individual code modules and test node IDs by AP-001.
+Detailed Sprint 1 acceptance IDs are defined in `docs/sprints/sprint-1.md`.
 
 | Requirement group | Decision | Task | Planned verification | Release |
 |---|---|---|---|---|

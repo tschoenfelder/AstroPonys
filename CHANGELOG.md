@@ -15,3 +15,8 @@ and intends to use semantic versioning after the first release.
 - Synthetic unit/component/integration tests and Windows/Python 3.13 CI gate.
 - Definition of Done and UAT guardrails requiring lower-level automated tests for all
   implemented behaviour and prohibiting duplicated pyramid verification in UAT.
+- Detailed Sprint 1 delivery plan with lower-level acceptance cases and deliberately
+  thin UAT scenarios.
+- Automated requirement-status traceability gate integrated into local and CI checks.
+- Cycle/filter contact-sheet grid with explicit missing-frame placeholders and labelled
+  per-frame stretch policy.

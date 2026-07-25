@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -12,6 +13,7 @@ from .models import FitsRecord
 
 THUMBNAIL = (320, 240)
 LABEL_HEIGHT = 44
+HEADER_HEIGHT = 28
 
 
 def render_contact_sheet(
@@ -27,35 +29,72 @@ def render_contact_sheet(
         {record.filter_name for record in usable if record.filter_name}, key=str.casefold
     )
     rank = {name.casefold(): index for index, name in enumerate(order)}
-    usable.sort(
-        key=lambda record: (
-            record.observed_at,
-            rank.get((record.filter_name or "").casefold(), len(rank)),
-        )
-    )
+    usable.sort(key=_observed_at)
+    cycles = _group_cycles(usable, rank)
     columns = max(1, len(order))
-    rows = (len(usable) + columns - 1) // columns
+    rows = len(cycles)
     cell_width, cell_height = THUMBNAIL[0], THUMBNAIL[1] + LABEL_HEIGHT
-    canvas = Image.new("L", (columns * cell_width, rows * cell_height), color=18)
+    canvas = Image.new("L", (columns * cell_width, HEADER_HEIGHT + rows * cell_height), color=18)
     draw = ImageDraw.Draw(canvas)
-    for index, record in enumerate(usable):
-        x = (index % columns) * cell_width
-        y = (index // columns) * cell_height
-        try:
-            thumb = _thumbnail(record.path, percentiles)
-            canvas.paste(thumb, (x, y))
-        except (OSError, ValueError, TypeError):
-            draw.rectangle((x, y, x + cell_width - 1, y + THUMBNAIL[1] - 1), outline=220)
-            draw.text((x + 8, y + 8), "UNREADABLE", fill=255)
-        stamp = record.observed_at.isoformat(timespec="seconds") if record.observed_at else "?"
-        label = (
-            f"{record.filter_name}  focus={record.focus_position:g}\n{stamp}"
-            if record.focus_position is not None
-            else f"{record.filter_name}  focus=?\n{stamp}"
-        )
-        draw.text((x + 4, y + THUMBNAIL[1] + 3), label, fill=235)
+    draw.text(
+        (5, 6),
+        f"Per-frame linear stretch: p{percentiles[0]:g}-p{percentiles[1]:g}",
+        fill=235,
+    )
+    for row, cycle in enumerate(cycles):
+        for column, filter_name in enumerate(order):
+            x = column * cell_width
+            y = HEADER_HEIGHT + row * cell_height
+            record = cycle.get(filter_name.casefold())
+            if record is None:
+                _draw_missing(draw, x, y, row, filter_name)
+                continue
+            try:
+                thumb = _thumbnail(record.path, percentiles)
+                canvas.paste(thumb, (x, y))
+            except (OSError, ValueError, TypeError):
+                draw.rectangle((x, y, x + cell_width - 1, y + THUMBNAIL[1] - 1), outline=220)
+                draw.text((x + 8, y + 8), "UNREADABLE", fill=255)
+            stamp = _observed_at(record).isoformat(timespec="seconds")
+            focus = f"{record.focus_position:g}" if record.focus_position is not None else "?"
+            label = f"cycle={row + 1}  {record.filter_name}  focus={focus}\n{stamp}"
+            draw.text((x + 4, y + THUMBNAIL[1] + 3), label, fill=235)
     destination.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(destination, format="PNG")
+
+
+def _group_cycles(records: list[FitsRecord], rank: dict[str, int]) -> list[dict[str, FitsRecord]]:
+    cycles: list[dict[str, FitsRecord]] = []
+    current: dict[str, FitsRecord] = {}
+    last_rank = -1
+    for record in records:
+        key = (record.filter_name or "").casefold()
+        current_rank = rank.get(key, len(rank))
+        if current and (key in current or current_rank < last_rank):
+            cycles.append(current)
+            current = {}
+            last_rank = -1
+        current[key] = record
+        last_rank = current_rank
+    if current:
+        cycles.append(current)
+    return cycles
+
+
+def _draw_missing(draw: ImageDraw.ImageDraw, x: int, y: int, row: int, filter_name: str) -> None:
+    draw.rectangle((x, y, x + THUMBNAIL[0] - 1, y + THUMBNAIL[1] - 1), outline=100)
+    draw.text((x + 8, y + 8), "MISSING", fill=150)
+    draw.text(
+        (x + 4, y + THUMBNAIL[1] + 3),
+        f"cycle={row + 1}  {filter_name}",
+        fill=180,
+    )
+
+
+def _observed_at(record: FitsRecord) -> datetime:
+    if record.observed_at is None:
+        raise ValueError("Contact-sheet record lacks observation time")
+    return record.observed_at
 
 
 def _thumbnail(path: Path, percentiles: tuple[float, float]) -> Image.Image:

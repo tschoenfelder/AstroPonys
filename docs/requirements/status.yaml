@@ -1,0 +1,20 @@
+schema_version: 1
+default_status: accepted
+
+# Only requirements with an adequate passing lower-level automated test may be marked
+# implemented or verified. The traceability gate enforces that minimum mechanically;
+# scientific and review adequacy remain part of Definition of Done.
+requirements:
+  REQ-CFG-001: verified
+  REQ-CFG-003: verified
+  REQ-CFG-006: verified
+  REQ-FITS-003: verified
+  REQ-FITS-004: verified
+  REQ-FOCUS-003: verified
+  REQ-FOCUS-005: verified
+  REQ-FOCUS-006: verified
+  REQ-CONTACT-001: verified
+  REQ-CONTACT-004: verified
+  REQ-CLI-001: verified
+  REQ-CLI-002: verified
+  REQ-SAFETY-002: verified

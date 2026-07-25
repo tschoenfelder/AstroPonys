@@ -10,6 +10,9 @@ Sprint goal: install and run one standalone pony that inventories a focus-check
 session, derives per-filter offsets from FITS header focus positions, and emits an
 auditable report plus a seven-filter monochrome contact sheet without copying FITS.
 
+The detailed execution order, automated acceptance cases and deliberately thin UAT
+scenarios are maintained in `docs/sprints/sprint-1.md`.
+
 ### AP-001 Project and quality foundation — P0 — In progress
 
 - Requirements: REQ-SAFETY-001..004, REQ-TEST-001..004, REQ-SCI-001..006

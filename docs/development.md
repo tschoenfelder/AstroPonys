@@ -19,6 +19,7 @@ manually maintained duplicate `requirements.txt` files are intentionally absent.
 
 ```powershell
 python -m pytest --cov=astroponys --cov-report=term-missing
+python -m astroponys.quality.traceability .
 python -m ruff check .
 python -m ruff format --check .
 python -m mypy src
