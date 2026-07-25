@@ -1,0 +1,37 @@
+# Testing strategy
+
+## Pyramid
+
+Target distribution by meaningful behaviour tests: 65–75% unit, 15–25% component,
+5–10% integration and no more than 5% acceptance/UI. Counts are reported, not gamed;
+one parameterised test represents one behaviour family for ratio review.
+
+## Fixtures
+
+- Synthetic FITS are generated deterministically with known header/image truth.
+- Public golden files are small, redistributable and documented.
+- Private observations are referenced by `ASTROPONYS_PRIVATE_DATA`; they are never
+  copied into build/output directories or committed.
+- Numeric tests declare physical units, seed, tolerance and why the tolerance is valid.
+
+## Scientific algorithm suites
+
+- Focus: known offsets, zero/linear/nonlinear drift, missing cycles, duplicates,
+  outliers, header aliases, insufficient samples and temperature correlation.
+- PSF/collimation indicators: symmetric stars, defocus, directional elongation,
+  spatial coma/tilt patterns and guiding-like common direction; no diagnosis assertion.
+- Motion: known translations, rotations, steady drift, dither-like steps and failures.
+- Quality selection: per-filter baselines, clouds, post-event changes, multi-night
+  replacement, manual override and manifest-only rejection.
+- Denoising (post-MVP only): known truth for flux, PSF, background, invented structure,
+  signal recovery and residual/noise spectrum.
+
+## Local and CI gates
+
+Fast unit/component tests run on every change. Integration tests run before merge.
+Private-data acceptance is opt-in. CI covers Windows and Linux Python 3.11–3.13;
+ARM64 dependency compatibility is checked in Sprint 1 and native Raspberry Pi execution
+is added when a runner is available.
+
+Release evidence distinguishes check pass rate, requirement/test coverage, known
+failures and confidence. Coverage percentage alone is never evidence of correctness.
