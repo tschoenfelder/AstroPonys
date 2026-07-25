@@ -65,6 +65,14 @@ and must be expanded before their tasks become Ready.
 - REQ-TEST-002: Enforce the test pyramid and deterministic fixture policy.
 - REQ-TEST-003: Validate supported desktop platforms in CI.
 - REQ-TEST-004: Allow opt-in private FITS tests without committing observations.
+- REQ-TEST-005: Describe behaviour as implemented only when a corresponding automated
+  unit, component or integration test passes at the lowest appropriate level.
+- REQ-TEST-006: Do not use UAT as evidence that missing lower-level implementation
+  tests have passed or as a substitute for them.
+- REQ-TEST-007: Limit UAT to user-visible workflows, acceptance criteria and fitness
+  for intended use; do not repeat lower-pyramid verification there.
+- REQ-TEST-008: Reproduce defects discovered during UAT at the lowest appropriate
+  automated test level before considering the fix complete.
 - REQ-PLATFORM-001: Use Windows with Python 3.13 as the primary execution and release gate.
 - REQ-PLATFORM-002: Prefer stable supported Python versions over immediate adoption of
   a newer interpreter when scientific dependency support lags.

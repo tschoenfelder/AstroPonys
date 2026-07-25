@@ -6,6 +6,20 @@ Target distribution by meaningful behaviour tests: 65–75% unit, 15–25% compo
 5–10% integration and no more than 5% acceptance/UI. Counts are reported, not gamed;
 one parameterised test represents one behaviour family for ratio review.
 
+## Implementation and UAT boundary
+
+A behaviour is considered implemented only after it has a passing automated test at
+the lowest appropriate level below UAT. Depending on scope, this is a unit, component
+or integration test. UAT is not part of this minimum and cannot replace missing
+lower-level verification.
+
+UAT answers whether representative user workflows and acceptance criteria work for
+their intended use. It is deliberately thin and must not re-test mathematical cases,
+parser variants, failure modes, adapter contracts or integration branches already
+verified below it. When UAT exposes a defect, first add a reproducing test at the
+lowest appropriate automated level, then implement and re-run the narrow test before
+repeating the affected UAT scenario.
+
 ## Fixtures
 
 - Synthetic FITS are generated deterministically with known header/image truth.

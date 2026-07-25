@@ -13,3 +13,5 @@ and intends to use semantic versioning after the first release.
 - Initial executable focus-offset vertical slice: YAML configuration, read-only FITS
   inventory, drift-aware analysis, reports, contact sheet, immutable manifest and CLI.
 - Synthetic unit/component/integration tests and Windows/Python 3.13 CI gate.
+- Definition of Done and UAT guardrails requiring lower-level automated tests for all
+  implemented behaviour and prohibiting duplicated pyramid verification in UAT.

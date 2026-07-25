@@ -112,6 +112,18 @@ Every behaviour test carries a valid requirement marker, for example
 indicators and selection policy independently before integration. The UI receives
 only minimal orchestration and acceptance tests.
 
+Implementation status requires automated verification below the UAT level. A behaviour
+must have passing unit, component and/or integration tests at the lowest appropriate
+level before it may be described as implemented. UAT is explicitly excluded from this
+minimum: it neither establishes implementation status nor compensates for missing
+lower-level tests.
+
+UAT verifies only user-visible workflows, acceptance criteria and fitness for intended
+use. It must not be designed or reported as a repetition of algorithm, edge-case,
+component or integration verification already owned by lower pyramid levels. Failures
+found during UAT must be reproduced at the lowest appropriate automated test level
+before the fix is considered complete.
+
 Before completion run, as relevant:
 
 ```text
@@ -131,9 +143,11 @@ dependencies, data implications and test levels are specified.
 
 ## Definition of Done
 
-A task is Done only when code and documentation are complete, local relevant tests
-pass, traceability is updated, scientific limitations are reported, source-data
-safety is preserved and no known critical defect remains.
+A task is Done only when code and documentation are complete, the behaviour is tested
+at the lowest appropriate automated level below UAT, all relevant local tests pass,
+traceability is updated, scientific limitations are reported, source-data safety is
+preserved and no known critical defect remains. Untested behaviour is not implemented.
+Passing UAT alone never satisfies Definition of Done.
 
 ## Changes prohibited without an ADR
 
