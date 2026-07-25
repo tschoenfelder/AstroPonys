@@ -16,8 +16,36 @@ selection. Automated calibration, stacking and mosaics follow later.
 
 ## Status
 
-Planning and Sprint 1 foundation. See [TASKS.md](TASKS.md),
+Sprint 1 implementation in progress. The first executable vertical slice and its
+synthetic test pyramid are present; real-session validation and requirement completion
+remain open. See [TASKS.md](TASKS.md),
 [requirements](docs/requirements/README.md), and [traceability](docs/traceability.md).
+
+## Development installation
+
+On the primary Windows/Python 3.13 platform:
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --only-binary=:all: ".[dev]"
+```
+
+Dependencies are defined only in `pyproject.toml`. The binary-only installation is an
+intentional check that every required library has a precompiled Windows wheel.
+
+## Focus-offset pony
+
+Place an `astroponys.yaml` beside the FITS files (see `examples/astroponys.yaml`) and run:
+
+```powershell
+astroponys focus-offset analyse E:\path\to\focuscheck
+```
+
+Outputs are created below
+`astroponys-output/focus-offset/<run-id>/`: `manifest.json`, `report.md`, `offsets.csv`
+and a monochrome `contact-sheet.png`. Exit code 0 means success, 2 means a completed
+run with warnings, and 1 means failure.
 
 ## Principles
 

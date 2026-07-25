@@ -10,7 +10,7 @@ Sprint goal: install and run one standalone pony that inventories a focus-check
 session, derives per-filter offsets from FITS header focus positions, and emits an
 auditable report plus a seven-filter monochrome contact sheet without copying FITS.
 
-### AP-001 Project and quality foundation — P0 — Ready
+### AP-001 Project and quality foundation — P0 — In progress
 
 - Requirements: REQ-SAFETY-001..004, REQ-TEST-001..004, REQ-SCI-001..006
 - Deliverables: packaging, CI matrix, requirement-marker validation, developer guide.
@@ -21,7 +21,7 @@ auditable report plus a seven-filter monochrome contact sheet without copying FI
   are green.
 - Tests: unit tests for traceability parser; CI smoke install and CLI invocation.
 
-### AP-002 Session configuration contract — P0 — Ready
+### AP-002 Session configuration contract — P0 — In progress
 
 - Requirements: REQ-CFG-001..006
 - Deliverables: versioned YAML schema, loader, clear diagnostics, example config.
@@ -29,7 +29,7 @@ auditable report plus a seven-filter monochrome contact sheet without copying FI
   adjacency; rejects unknown schema versions and unsafe output paths; no global search.
 - Tests: unit matrix for defaults/errors; component test in temporary session tree.
 
-### AP-003 FITS inventory and header normalisation — P0 — Ready
+### AP-003 FITS inventory and header normalisation — P0 — In progress
 
 - Requirements: REQ-FITS-001..007, REQ-STORAGE-001..004
 - Deliverables: read-only scanner; canonical records for path, identity, timestamp,
@@ -39,7 +39,7 @@ auditable report plus a seven-filter monochrome contact sheet without copying FI
   byte-identical; no FITS copy is created; inventory manifest is deterministic.
 - Tests: parser unit tests; synthetic FITS component test; before/after hashes.
 
-### AP-004 Focus-cycle pairing and baseline model — P0 — Ready
+### AP-004 Focus-cycle pairing and baseline model — P0 — In progress
 
 - Requirements: REQ-FOCUS-001..006, REQ-SCI-002..005
 - Deliverables: configurable cycle detection; bracketing/interpolated Luminance
@@ -49,7 +49,7 @@ auditable report plus a seven-filter monochrome contact sheet without copying FI
 - Tests: synthetic series with zero/linear drift, missing frames, duplicates and
   outliers; exact expected offsets within declared tolerances.
 
-### AP-005 Robust offset estimate and uncertainty report — P0 — Ready
+### AP-005 Robust offset estimate and uncertainty report — P0 — In progress
 
 - Requirements: REQ-FOCUS-007..011, REQ-SCI-003..006
 - Deliverables: per-filter samples, robust centre, dispersion, justified interval
@@ -58,7 +58,7 @@ auditable report plus a seven-filter monochrome contact sheet without copying FI
   inconsistent samples reduce confidence; no unjustified confidence interval.
 - Tests: deterministic estimator unit tests and property tests; golden report schema.
 
-### AP-006 Monochrome contact sheet — P0 — Ready
+### AP-006 Monochrome contact sheet — P0 — In progress
 
 - Requirements: REQ-CONTACT-001..006, REQ-SCI-001
 - Deliverables: overview grouped by cycle/filter with common, documented stretch,
@@ -67,7 +67,7 @@ auditable report plus a seven-filter monochrome contact sheet without copying FI
   have placeholders; contact sheet and statistics share a run ID.
 - Tests: component render against structural assertions plus small visual golden.
 
-### AP-007 Standalone CLI and immutable run manifest — P0 — Ready
+### AP-007 Standalone CLI and immutable run manifest — P0 — In progress
 
 - Requirements: REQ-CLI-001..005, REQ-SAFETY-001..004
 - Deliverables: `astroponys focus-offset analyse <session>`; output run directory;

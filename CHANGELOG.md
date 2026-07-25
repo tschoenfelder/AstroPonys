@@ -10,3 +10,6 @@ and intends to use semantic versioning after the first release.
 - Initial project constitution, requirements, ADRs, test strategy and roadmap.
 - Detailed Sprint 1 plan for the focus-offset vertical slice.
 - Windows/Python 3.13 primary-platform and precompiled-wheel dependency policy.
+- Initial executable focus-offset vertical slice: YAML configuration, read-only FITS
+  inventory, drift-aware analysis, reports, contact sheet, immutable manifest and CLI.
+- Synthetic unit/component/integration tests and Windows/Python 3.13 CI gate.

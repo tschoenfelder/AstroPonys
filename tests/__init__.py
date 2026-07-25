@@ -1,0 +1,1 @@
+"""AstroPonys tests."""
