@@ -52,6 +52,7 @@ def test_cycle_count_is_not_hardcoded() -> None:
     assert estimates["Blue"].sample_count == 1
     assert estimates["Blue"].offset_median == -3
     assert estimates["Blue"].interval_95 is None
+    assert estimates["Blue"].confidence.repeatability == 0
 
 
 @pytest.mark.requirement("REQ-FOCUS-006")

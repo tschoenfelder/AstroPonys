@@ -98,7 +98,10 @@ def _observed_at(record: FitsRecord) -> datetime:
 
 
 def _thumbnail(path: Path, percentiles: tuple[float, float]) -> Image.Image:
-    with fits.open(path, mode="readonly", memmap=True) as hdus:
+    # Scaled unsigned-integer FITS (BZERO/BSCALE), common for astronomy cameras,
+    # cannot be read through Astropy's memory mapping. Thumbnails are processed one
+    # frame at a time, so disabling memmap keeps memory bounded to a single image.
+    with fits.open(path, mode="readonly", memmap=False) as hdus:
         data = np.asarray(hdus[0].data, dtype=np.float32)
     data = np.squeeze(data)
     if data.ndim != 2:

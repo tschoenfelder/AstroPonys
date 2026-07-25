@@ -149,7 +149,12 @@ def _confidence(
     interpolated = sum(sample.baseline_method == "interpolated" for sample in samples)
     method_evidence = 20 if interpolated == count else 15
     data_quality = min(25, 5 + count * 4)
-    repeatability = max(0, 20 - min(20, round(mad)))
+    if count < 2:
+        repeatability = 0
+    else:
+        count_factor = min(1.0, (count - 1) / 4)
+        dispersion_score = max(0, 20 - min(20, round(mad)))
+        repeatability = round(dispersion_score * count_factor)
     test_coverage = 12
     model_fit = round(10 * interpolated / count) if count else 0
     platform_validation = 3

@@ -37,6 +37,10 @@ bootstrap population; the pony never silently rejects them.
 - The outlier rule is a review aid, not proof that a measurement is invalid. Its
   behaviour for zero MAD is intentionally sensitive and must be interpreted with the
   focuser step size and autofocus repeatability.
+- Repeatability confidence is zero for a single sample. For two to four samples its
+  dispersion-based score is reduced linearly; the full dispersion score is available
+  only from five samples onward. A zero MAD from one measurement is never interpreted
+  as perfect repeatability.
 - Temperature, backlash, direction of approach, seeing and optical movement can remain
   confounders. The result is not by itself proof of a physical filter property.
 

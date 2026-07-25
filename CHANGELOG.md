@@ -24,3 +24,7 @@ and intends to use semantic versioning after the first release.
   FITS alias-conflict warnings and expanded CLI/inventory acceptance tests.
 - Local-only private-data validation workflow with explicit prohibition on publishing
   private measurements or observation metadata by default.
+- Corrected repeatability confidence so a single sample scores 0/20 instead of treating
+  its necessarily zero dispersion as perfect repeatability.
+- Fixed contact-sheet rendering for scaled unsigned-integer camera FITS using
+  `BZERO`/`BSCALE`, covered by a realistic component regression test.
