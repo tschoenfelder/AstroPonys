@@ -20,3 +20,7 @@ and intends to use semantic versioning after the first release.
 - Automated requirement-status traceability gate integrated into local and CI checks.
 - Cycle/filter contact-sheet grid with explicit missing-frame placeholders and labelled
   per-frame stretch policy.
+- Robust retained outlier-candidate reporting, strict nested configuration validation,
+  FITS alias-conflict warnings and expanded CLI/inventory acceptance tests.
+- Local-only private-data validation workflow with explicit prohibition on publishing
+  private measurements or observation metadata by default.

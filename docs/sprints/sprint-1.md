@@ -174,8 +174,11 @@ filesystem edge cases or source immutability already covered below.
 
 ## Current implementation snapshot
 
-- Present: executable configuration, inventory, baseline estimator, report, contact
-  sheet, immutable manifest, CLI, 10 lower-level tests and platform CI.
-- Next: traceability status gate, config/inventory edge matrices, cycle-aware contact
-  layout, explicit outlier policy, warning/failure integration cases, release evidence,
-  and private NGC 7635 validation.
+- Present: executable configuration, inventory, baseline estimator, report, cycle-aware
+  contact sheet, immutable manifest, CLI, traceability gate, outlier-candidate policy,
+  warning/failure paths, 23 lower-level tests and platform CI.
+- Private validation: a local read-only compatibility check has started, but the
+  repeated autofocus evidence required to complete AP-008 is not yet available. Private
+  measurements and paths are not published in this repository.
+- Next: remaining configuration/FITS edge cases, explicit cycle records and exclusions,
+  visual golden review, release evidence and sufficient repeated private focus evidence.

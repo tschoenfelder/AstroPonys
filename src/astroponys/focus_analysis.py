@@ -94,11 +94,17 @@ def _estimate(filter_name: str, samples: tuple[FocusSample, ...]) -> FilterEstim
     centre = float(statistics.median(values))
     mad = float(statistics.median(abs(value - centre) for value in values))
     interval = _bootstrap_median_interval(values) if len(values) >= 5 else None
+    outlier_indices = _outlier_indices(values, centre, mad)
+    outlier_paths = tuple(samples[index].path for index in outlier_indices)
     warnings: list[str] = []
     if len(values) < 5:
         warnings.append("Fewer than five samples: 95% bootstrap interval not estimated")
     if mad > 10:
         warnings.append("High offset dispersion; inspect autofocus repeatability and drift")
+    if outlier_paths:
+        warnings.append(
+            f"{len(outlier_paths)} influential outlier candidate(s) flagged but retained"
+        )
     confidence = _confidence(samples, mad, interval is not None)
     return FilterEstimate(
         filter_name=filter_name,
@@ -110,9 +116,24 @@ def _estimate(filter_name: str, samples: tuple[FocusSample, ...]) -> FilterEstim
         if interval
         else None,
         samples=samples,
+        outlier_paths=outlier_paths,
+        outlier_method=(
+            "absolute deviation > 3.5 x scaled MAD; non-median values when MAD is zero"
+            if len(values) >= 5
+            else None
+        ),
         confidence=confidence,
         warnings=tuple(warnings),
     )
+
+
+def _outlier_indices(values: list[float], centre: float, mad: float) -> tuple[int, ...]:
+    if len(values) < 5:
+        return ()
+    if mad == 0:
+        return tuple(index for index, value in enumerate(values) if value != centre)
+    threshold = 3.5 * 1.4826 * mad
+    return tuple(index for index, value in enumerate(values) if abs(value - centre) > threshold)
 
 
 def _bootstrap_median_interval(values: list[float]) -> tuple[float, float]:

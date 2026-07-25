@@ -79,7 +79,7 @@ scenarios are maintained in `docs/sprints/sprint-1.md`.
   never overwrite; paths work on Windows/Linux; output can be deleted independently.
 - Tests: integration tests for happy path, malformed FITS and existing run IDs.
 
-### AP-008 Validate with NGC 7635 private session — P1 — Planned for next release
+### AP-008 Validate with NGC 7635 private session — P1 — In progress
 
 - Requirements: REQ-FOCUS-010, REQ-TEST-004
 - Input: user-provided private FITS via environment variable, never committed/copied.
@@ -87,6 +87,9 @@ scenarios are maintained in `docs/sprints/sprint-1.md`.
   method limits and confidence; convert only redistributable minimal cases to synthetic
   regression fixtures.
 - Tests: optional local private-data acceptance test.
+- Current evidence: a local read-only header compatibility check has begun; statistical
+  validation remains open until sufficient repeated focus evidence is available.
+  Private measurements, paths and observation metadata are never published by default.
 
 ### AP-009 Sprint 1 release evidence — P0 — Planned for next release
 

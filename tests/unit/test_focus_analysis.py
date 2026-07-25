@@ -60,3 +60,25 @@ def test_edge_sample_is_retained_and_warned() -> None:
     estimates, warnings = analyse_focus_offsets(records, "Luminance")
     assert estimates["Red"].samples[0].baseline_method == "nearest"
     assert any("limited" in warning for warning in warnings)
+
+
+@pytest.mark.requirement("REQ-FOCUS-008")
+def test_influential_outlier_is_flagged_but_retained() -> None:
+    records: list[FitsRecord] = []
+    offsets = [50, 50, 50, 50, 110]
+    for index, offset in enumerate(offsets):
+        minute = index * 3
+        records.extend(
+            [
+                record(minute, "Luminance", 1000),
+                record(minute + 1, "Red", 1000 + offset),
+                record(minute + 2, "Luminance", 1000),
+            ]
+        )
+    estimates, _ = analyse_focus_offsets(records, "Luminance")
+    red = estimates["Red"]
+    assert red.sample_count == 5
+    assert red.offset_median == 50
+    assert len(red.outlier_paths) == 1
+    assert red.outlier_paths[0].name == "013-Red.fits"
+    assert {sample.offset for sample in red.samples} == {50, 110}

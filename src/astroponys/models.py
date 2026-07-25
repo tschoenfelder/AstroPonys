@@ -79,5 +79,7 @@ class FilterEstimate:
     interval_95: tuple[float, float] | None
     interval_method: str | None
     samples: tuple[FocusSample, ...]
+    outlier_paths: tuple[Path, ...]
+    outlier_method: str | None
     confidence: ConfidenceBreakdown
     warnings: tuple[str, ...] = ()

@@ -7,14 +7,20 @@ default_status: accepted
 requirements:
   REQ-CFG-001: verified
   REQ-CFG-003: verified
+  REQ-CFG-004: verified
   REQ-CFG-006: verified
+  REQ-FITS-001: verified
   REQ-FITS-003: verified
   REQ-FITS-004: verified
+  REQ-FITS-006: verified
   REQ-FOCUS-003: verified
   REQ-FOCUS-005: verified
   REQ-FOCUS-006: verified
+  REQ-FOCUS-008: verified
   REQ-CONTACT-001: verified
   REQ-CONTACT-004: verified
   REQ-CLI-001: verified
   REQ-CLI-002: verified
+  REQ-CLI-003: verified
   REQ-SAFETY-002: verified
+  REQ-SAFETY-003: verified

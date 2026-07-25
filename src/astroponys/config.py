@@ -61,6 +61,12 @@ def _mapping(value: Any, name: str) -> dict[str, Any]:
     return {str(key): item for key, item in value.items()}
 
 
+def _reject_unknown(mapping: dict[str, Any], allowed: set[str], name: str) -> None:
+    unknown = set(mapping) - allowed
+    if unknown:
+        raise ConfigError(f"Unknown {name} keys: {', '.join(sorted(unknown))}")
+
+
 def load_config(session: Path) -> SessionConfig:
     config_path = locate_config(session)
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
@@ -75,17 +81,21 @@ def load_config(session: Path) -> SessionConfig:
 
     base = config_path.parent
     images = _mapping(root.get("images"), "images")
+    _reject_unknown(images, {"directory", "recursive"}, "images")
     image_directory = (base / str(images.get("directory", "."))).resolve()
     if not image_directory.is_dir():
         raise ConfigError(f"Image directory does not exist: {image_directory}")
 
     output = _mapping(root.get("output"), "output")
+    _reject_unknown(output, {"directory"}, "output")
     output_directory = (base / str(output.get("directory", "astroponys-output"))).resolve()
     if output_directory == image_directory or image_directory not in output_directory.parents:
         raise ConfigError("Output directory must be a child of the image directory")
 
     focus = _mapping(root.get("focus"), "focus")
+    _reject_unknown(focus, {"reference_filter", "filter_order"}, "focus")
     fits = _mapping(root.get("fits"), "fits")
+    _reject_unknown(fits, {"header_aliases"}, "fits")
     custom_aliases = _mapping(fits.get("header_aliases"), "fits.header_aliases")
     aliases = dict(DEFAULT_HEADER_ALIASES)
     for field_name, values in custom_aliases.items():
@@ -98,6 +108,7 @@ def load_config(session: Path) -> SessionConfig:
         raise ConfigError("focus.filter_order must be a list")
 
     sheet = _mapping(root.get("contact_sheet"), "contact_sheet")
+    _reject_unknown(sheet, {"percentiles"}, "contact_sheet")
     percentiles = sheet.get("percentiles", [1.0, 99.5])
     if (
         not isinstance(percentiles, list)
@@ -107,6 +118,7 @@ def load_config(session: Path) -> SessionConfig:
         raise ConfigError("contact_sheet.percentiles must be two increasing values in 0..100")
 
     identity = _mapping(root.get("identity"), "identity")
+    _reject_unknown(identity, {"session_id", "night_id", "target_id", "panel_id"}, "identity")
     return SessionConfig(
         config_path=config_path,
         image_directory=image_directory,

@@ -39,10 +39,18 @@ def _sort_key(record: FitsRecord) -> tuple[datetime, str]:
     return (record.observed_at or latest, str(record.path).casefold())
 
 
-def _first(header: fits.Header, aliases: tuple[str, ...]) -> tuple[Any | None, str | None]:
-    for key in aliases:
-        if key in header:
-            return header[key], key
+def _first(
+    header: fits.Header, aliases: tuple[str, ...], field_name: str, warnings: list[str]
+) -> tuple[Any | None, str | None]:
+    present = [(key, header[key]) for key in aliases if key in header]
+    if present:
+        chosen_key, chosen_value = present[0]
+        conflicting = [key for key, value in present[1:] if str(value) != str(chosen_value)]
+        if conflicting:
+            warnings.append(
+                f"CONFLICTING_{field_name.upper()}: chose {chosen_key}; also {', '.join(conflicting)}"
+            )
+        return chosen_value, chosen_key
     return None, None
 
 
@@ -55,7 +63,7 @@ def _read_record(path: Path, aliases: dict[str, tuple[str, ...]]) -> FitsRecord:
             header = hdus[0].header
             values: dict[str, Any] = {}
             for field_name, keys in aliases.items():
-                value, source = _first(header, keys)
+                value, source = _first(header, keys, field_name, warnings)
                 values[field_name] = value
                 if source:
                     sources[field_name] = source

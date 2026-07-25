@@ -60,3 +60,25 @@ def test_cli_returns_warning_for_unbracketed_focus_sample(tmp_path: Path) -> Non
 def test_cli_returns_failure_without_config(tmp_path: Path) -> None:
     assert main(["focus-offset", "analyse", str(tmp_path)]) == EXIT_FAILURE
     assert not (tmp_path / "astroponys-output").exists()
+
+
+@pytest.mark.requirement("REQ-CLI-003")
+@pytest.mark.requirement("REQ-SAFETY-003")
+def test_json_console_and_manifest_contain_provenance(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    write_config(tmp_path)
+    write_focus_fits(tmp_path / "l1.fits", 0, "Luminance", 1000)
+    write_focus_fits(tmp_path / "r.fits", 1, "Red", 1050)
+    write_focus_fits(tmp_path / "l2.fits", 2, "Luminance", 1000)
+    assert main(["focus-offset", "analyse", str(tmp_path), "--json"]) == EXIT_SUCCESS
+    manifest = json.loads(capsys.readouterr().out)
+    assert manifest["software"]["name"] == "astroponys"
+    assert manifest["config_path"].endswith("astroponys.yaml")
+    assert manifest["inputs"][0]["path"].endswith("l1.fits")
+    assert manifest["artifacts"] == [
+        "manifest.json",
+        "report.md",
+        "offsets.csv",
+        "contact-sheet.png",
+    ]

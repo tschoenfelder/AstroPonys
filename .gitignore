@@ -11,6 +11,7 @@ dist/
 build/
 astroponys-output/
 tests/private-data/
+private-validation/
 *.fits
 *.fit
 *.fits.fz

@@ -28,3 +28,21 @@ def test_rejects_output_outside_image_directory(tmp_path: Path) -> None:
     )
     with pytest.raises(ConfigError, match="child"):
         load_config(tmp_path)
+
+
+@pytest.mark.requirement("REQ-CFG-003")
+def test_rejects_unknown_nested_key(tmp_path: Path) -> None:
+    (tmp_path / "astroponys.yaml").write_text(
+        "schema_version: 1\nimages:\n  directory: .\n  surprise: true\n", encoding="utf-8"
+    )
+    with pytest.raises(ConfigError, match="Unknown images keys"):
+        load_config(tmp_path)
+
+
+@pytest.mark.requirement("REQ-CFG-004")
+def test_loads_configurable_header_alias(tmp_path: Path) -> None:
+    (tmp_path / "astroponys.yaml").write_text(
+        "schema_version: 1\nfits:\n  header_aliases:\n    focus_position: [MYFOCUS]\n",
+        encoding="utf-8",
+    )
+    assert load_config(tmp_path).header_aliases["focus_position"] == ("MYFOCUS",)

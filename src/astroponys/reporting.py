@@ -20,6 +20,7 @@ def write_csv(path: Path, estimates: dict[str, FilterEstimate]) -> None:
                 "interval_95_low",
                 "interval_95_high",
                 "confidence_index",
+                "outlier_candidates",
             ]
         )
         for estimate in estimates.values():
@@ -33,6 +34,7 @@ def write_csv(path: Path, estimates: dict[str, FilterEstimate]) -> None:
                     interval[0],
                     interval[1],
                     estimate.confidence.total,
+                    len(estimate.outlier_paths),
                 ]
             )
 
@@ -93,6 +95,25 @@ def write_markdown(
             ]
         )
         lines.extend(f"- Warning: {warning}" for warning in estimate.warnings)
+        if estimate.outlier_paths:
+            lines.append(f"- Outlier method: {estimate.outlier_method}")
+            lines.extend(
+                f"- Outlier candidate retained: `{item}`" for item in estimate.outlier_paths
+            )
+        lines.extend(
+            [
+                "",
+                "| Time | Focus | Baseline | Offset | Baseline method | Outlier candidate |",
+                "|---|---:|---:|---:|---|---|",
+            ]
+        )
+        outliers = set(estimate.outlier_paths)
+        for sample in estimate.samples:
+            lines.append(
+                f"| {sample.observed_at.isoformat()} | {sample.focus_position:.2f} | "
+                f"{sample.baseline_position:.2f} | {sample.offset:.2f} | "
+                f"{sample.baseline_method} | {'yes' if sample.path in outliers else 'no'} |"
+            )
         lines.append("")
     if warnings:
         lines.extend(["## Run warnings", ""])
