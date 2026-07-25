@@ -65,6 +65,12 @@ and must be expanded before their tasks become Ready.
 - REQ-TEST-002: Enforce the test pyramid and deterministic fixture policy.
 - REQ-TEST-003: Validate supported desktop platforms in CI.
 - REQ-TEST-004: Allow opt-in private FITS tests without committing observations.
+- REQ-PLATFORM-001: Use Windows with Python 3.13 as the primary execution and release gate.
+- REQ-PLATFORM-002: Prefer stable supported Python versions over immediate adoption of
+  a newer interpreter when scientific dependency support lags.
+- REQ-PLATFORM-003: Required dependencies shall provide maintained precompiled Windows
+  wheels for selected Python versions unless an ADR approves and supports an exception.
+- REQ-PLATFORM-004: Keep Linux and Raspberry Pi/ARM64 as supported secondary targets.
 - REQ-SCI-001: Label every output product level and preserve its parent provenance.
 - REQ-SCI-002: Keep measurement separate from inference and recommendation.
 - REQ-SCI-003: State method, assumptions, limits and evidence status.

@@ -33,5 +33,11 @@ Private-data acceptance is opt-in. CI covers Windows and Linux Python 3.11–3.1
 ARM64 dependency compatibility is checked in Sprint 1 and native Raspberry Pi execution
 is added when a runner is available.
 
+Windows with Python 3.13 is the primary release gate. Compatibility jobs for other
+supported Python versions and Linux supplement this gate. Dependency validation must
+confirm that required packages install from precompiled Windows wheels; source builds
+must not occur silently. Raspberry Pi/ARM64 is a secondary compatibility and resource
+target and gains a native execution gate when a suitable runner is available.
+
 Release evidence distinguishes check pass rate, requirement/test coverage, known
 failures and confidence. Coverage percentage alone is never evidence of correctness.

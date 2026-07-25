@@ -31,3 +31,16 @@ src/astroponys/
 
 The session model reserves `session_id`, `night_id`, `target_id` and `panel_id` so
 multi-night and mosaic work can be added without redefining input identity.
+
+## Platform priorities
+
+Windows is the primary execution and development platform because the available
+Windows workstation is substantially faster than the Raspberry Pi. Python 3.13 is
+the current primary interpreter. Linux and Raspberry Pi/ARM64 remain supported
+targets, with optimisation and native packaging following the desktop vertical slice.
+
+The project prefers a stable supported Python/dependency combination over adopting
+the newest Python release immediately. Required scientific libraries must normally
+provide maintained precompiled Windows wheels for selected Python versions. A
+dependency that requires local Windows compilation needs an ADR documenting why it
+is unavoidable and how installation will be supported.

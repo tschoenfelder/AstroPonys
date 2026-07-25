@@ -14,8 +14,11 @@ auditable report plus a seven-filter monochrome contact sheet without copying FI
 
 - Requirements: REQ-SAFETY-001..004, REQ-TEST-001..004, REQ-SCI-001..006
 - Deliverables: packaging, CI matrix, requirement-marker validation, developer guide.
-- Acceptance: Python 3.11–3.13 checks run on Windows/Linux; ARM64-compatible pure
-  Python dependency policy documented; lint/type/unit gates are green.
+- Acceptance: the complete gate runs on Windows/Python 3.13; compatibility checks
+  cover Python 3.11–3.13 on Windows/Linux as appropriate; every required scientific
+  dependency has a maintained precompiled Windows wheel for the selected version;
+  ARM64 compatibility and fallback constraints are documented; lint/type/unit gates
+  are green.
 - Tests: unit tests for traceability parser; CI smoke install and CLI invocation.
 
 ### AP-002 Session configuration contract — P0 — Ready

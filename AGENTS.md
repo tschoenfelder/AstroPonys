@@ -78,7 +78,15 @@ Inference, Hypothesis or Recommendation.
 
 ## Architecture
 
-- Support Python 3.11+ on Windows, Linux and Raspberry Pi/ARM64.
+- Windows is the primary runtime and development platform; Python 3.13 is the
+  current primary interpreter.
+- Support Python 3.11+ on Windows, Linux and Raspberry Pi/ARM64, but do not chase
+  the newest Python release at the expense of reliable binary dependencies.
+- Prefer dependencies that publish maintained precompiled Windows wheels for the
+  supported Python versions. Avoid requiring users to compile scientific libraries
+  locally on Windows.
+- Treat wheel availability, platform maintenance and installation reliability as
+  dependency-selection criteria alongside scientific and technical suitability.
 - Scientific algorithms are pure, deterministic modules where practical.
 - CLI and future UI layers only validate inputs and orchestrate domain services.
 - Adapters isolate FITS I/O, filesystem behaviour and future Ekos/KStars integration.
@@ -112,6 +120,9 @@ ruff check .
 ruff format --check .
 mypy src
 ```
+
+Run the complete release-relevant suite on Windows with Python 3.13. Additional
+Python/platform jobs may qualify compatibility but do not replace this primary gate.
 
 ## Definition of Ready
 
