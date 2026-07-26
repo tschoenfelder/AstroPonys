@@ -1,6 +1,6 @@
 # METHOD-AUTOFOCUS-001: Stellar HFR focus curve
 
-- Version: 0.1
+- Version: 0.2
 - Status: Experimental
 - Claim types: Measurement, Classification and Statistical result
 - Requirements: REQ-AUTOFOCUS-001..007
@@ -17,19 +17,22 @@ The algorithm reads `FOCUSPOS`, estimates background and noise robustly, locates
 peaks above eight noise sigmas and measures spatial extent in a local aperture. A peak
 must occupy at least four significant pixels in its central 5×5 footprint; isolated
 hot/defect pixels are rejected. At least eight extended sources are required for a
-normal multi-star frame. The frame metric is median stellar half-flux radius (HFR).
+normal multi-star frame. Stellar apertures are measured as HFR and normalized to the
+diameter metric `HFD = 2 x HFR` at the focus-curve service boundary.
 
 A second path detects one large, low-surface-brightness defocused donut after 4× block
 averaging and difference-of-Gaussians filtering. Large connected components are
 measured using a sequence-stabilised centre and azimuthal radial profile. Reports expose
 the ring-peak radius, radial ring-thickness FWHM and equivalent half-flux diameter
-(`HFD = 2 × HFR`). One measurable donut is sufficient to make a frame usable, but not
-to make an entire curve acceptable.
+(`HFD = 2 x HFR`). The detected donut is represented to the curve service as one star
+at its measured centre with this HFD value. One measurable donut is sufficient to make
+a frame usable, but not to make an entire curve acceptable.
 
 ## Curve acceptance
 
 At least five usable frames at five distinct positions are required. A quadratic is
-fitted to median HFR versus focus position. An optimum is reported only if:
+fitted to per-frame HFD versus focus position. Multiplication by two changes the metric
+scale but not the fitted vertex or R-squared value. An optimum is reported only if:
 
 - the quadratic is convex;
 - its vertex lies inside the measured position range; and

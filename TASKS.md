@@ -101,12 +101,14 @@ scenarios are maintained in `docs/sprints/sprint-1.md`.
 
 ### AP-010 Standalone autofocus-curve audit — P1 — In progress
 
-- Requirements: REQ-AUTOFOCUS-001..007
+- Requirements: REQ-AUTOFOCUS-001..008
 - Deliverables: filter-independent per-frame usability classification, robust stellar
-  HFR measurements, guarded optimal-focus fit and explicit no-result reasons.
+  HFR measurements, a shared HFD service interface for stellar and donut sources,
+  guarded optimal-focus fit and explicit no-result reasons.
 - Acceptance: isolated defect pixels are rejected; synthetic stellar sweeps recover a
   known optimum; non-convex, weak and insufficient curves never produce an optimum.
-- Tests: synthetic unit/component cases plus local-only real-sequence compatibility.
+- Tests: synthetic unit/component cases, explicit HFD service-boundary verification
+  plus local-only real-sequence compatibility.
 - Current evidence: core domain algorithm and hot-pixel/known-focus tests are complete;
   CLI/report integration and broader real stellar validation remain open.
 

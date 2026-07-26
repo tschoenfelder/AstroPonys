@@ -27,6 +27,15 @@ class AutofocusFrame:
     ring_thickness_fwhm_px: float | None = None
     equivalent_hfd_px: float | None = None
 
+    @property
+    def focus_metric_hfd_px(self) -> float | None:
+        """Return the diameter metric consumed by the focus-curve service."""
+        if self.equivalent_hfd_px is not None:
+            return self.equivalent_hfd_px
+        if self.median_hfr_px is not None:
+            return 2 * self.median_hfr_px
+        return None
+
 
 @dataclass(frozen=True)
 class AutofocusResult:
@@ -141,16 +150,16 @@ def fit_focus_curve(frames: tuple[AutofocusFrame, ...]) -> AutofocusResult:
     if len(usable) < 5:
         reasons.append(f"TOO_FEW_USABLE_FRAMES: {len(usable)} < 5")
     positions = np.asarray([frame.focus_position for frame in usable], dtype=float)
-    hfr = np.asarray([frame.median_hfr_px for frame in usable], dtype=float)
+    hfd = np.asarray([frame.focus_metric_hfd_px for frame in usable], dtype=float)
     if len(np.unique(positions)) < 5:
         reasons.append("TOO_FEW_DISTINCT_FOCUS_POSITIONS")
     if reasons:
         return AutofocusResult(frames, None, None, None, "insufficient-data", tuple(reasons), 0)
 
-    coefficients = np.polyfit(positions, hfr, 2)
+    coefficients = np.polyfit(positions, hfd, 2)
     predicted = np.polyval(coefficients, positions)
-    residual = float(np.sum((hfr - predicted) ** 2))
-    total = float(np.sum((hfr - np.mean(hfr)) ** 2))
+    residual = float(np.sum((hfd - predicted) ** 2))
+    total = float(np.sum((hfd - np.mean(hfd)) ** 2))
     r_squared = 1.0 - residual / total if total > 0 else 0.0
     a, b, c = (float(value) for value in coefficients)
     optimum = -b / (2 * a) if a > 0 else None

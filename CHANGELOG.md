@@ -7,6 +7,8 @@ and intends to use semantic versioning after the first release.
 
 ### Added
 
+- Normalized stellar and donut focus-curve inputs to HFD (`2 x HFR`) while retaining
+  the detected centre and source classification for every frame.
 - Initial project constitution, requirements, ADRs, test strategy and roadmap.
 - Detailed Sprint 1 plan for the focus-offset vertical slice.
 - Windows/Python 3.13 primary-platform and precompiled-wheel dependency policy.

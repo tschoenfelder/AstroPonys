@@ -101,3 +101,6 @@ and must be expanded before their tasks become Ready.
   focus result.
 - REQ-AUTOFOCUS-007: Report curve fit quality, usable/rejected counts, method limitations
   and evidence confidence.
+- REQ-AUTOFOCUS-008: Normalize every accepted stellar or donut measurement to
+  `HFD = 2 x HFR` before passing per-frame values to the focus-curve fit, while
+  preserving the detected source centre and source type.

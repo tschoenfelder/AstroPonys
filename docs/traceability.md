@@ -17,4 +17,4 @@ Detailed Sprint 1 acceptance IDs are defined in `docs/sprints/sprint-1.md`.
 | REQ-TEST-001..008 | ADR-0005 | AP-001, AP-008, AP-009 | meta-tests + CI + release audit | v0.1.0 |
 | REQ-PLATFORM-001..004 | ADR-0006 | AP-001 | Windows 3.13 gate + wheel install audit | v0.1.0 |
 | REQ-SCI-001..006 | ADR-0004 | AP-001, AP-004..006, AP-009 | unit + release audit | v0.1.0 |
-| REQ-AUTOFOCUS-001..007 | METHOD-AUTOFOCUS-001 | AP-010 | synthetic unit + private compatibility | v0.1.0 |
+| REQ-AUTOFOCUS-001..008 | ADR-0007, METHOD-AUTOFOCUS-001 | AP-010 | synthetic unit + private compatibility | v0.1.0 |

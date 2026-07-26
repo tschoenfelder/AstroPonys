@@ -78,3 +78,19 @@ def test_large_single_donut_is_measured_but_flat_curve_has_no_optimum(tmp_path: 
     assert all(frame.usable and frame.source_kind == "donut" for frame in result.frames)
     assert all(frame.measured_stars == 1 for frame in result.frames)
     assert all(frame.equivalent_hfd_px == pytest.approx(210, abs=20) for frame in result.frames)
+    assert all(frame.focus_metric_hfd_px == frame.equivalent_hfd_px for frame in result.frames)
+
+
+@pytest.mark.requirement("REQ-AUTOFOCUS-008")
+def test_curve_service_consumes_two_times_hfr_for_stellar_frames(tmp_path: Path) -> None:
+    for position in range(1500, 1701, 25):
+        write_star_field(tmp_path / f"focus-{position}.fits", position)
+    result = analyse_autofocus_sequence(tmp_path)
+    assert all(
+        frame.focus_metric_hfd_px == pytest.approx(2 * frame.median_hfr_px)
+        for frame in result.frames
+        if frame.median_hfr_px is not None
+    )
+    positions = np.asarray([frame.focus_position for frame in result.frames], dtype=float)
+    expected_hfd = np.asarray([frame.focus_metric_hfd_px for frame in result.frames], dtype=float)
+    assert result.fit_coefficients == pytest.approx(np.polyfit(positions, expected_hfd, 2))
