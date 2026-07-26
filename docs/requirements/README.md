@@ -85,3 +85,19 @@ and must be expanded before their tasks become Ready.
 - REQ-SCI-004: Report statistical intervals only when justified by a defined model.
 - REQ-SCI-005: Report an evidence confidence index and component breakdown.
 - REQ-SCI-006: Never describe the confidence index as probability of truth.
+
+## Autofocus curve
+
+- REQ-AUTOFOCUS-001: Treat each directory as an independent autofocus sequence and
+  read focus position from configurable FITS metadata without requiring a filter.
+- REQ-AUTOFOCUS-002: Classify every frame as usable or unusable and preserve explicit
+  rejection reasons.
+- REQ-AUTOFOCUS-003: Reject isolated hot/defect pixels as stellar focus measurements.
+- REQ-AUTOFOCUS-004: Measure a robust per-frame HFR only from enough spatially extended
+  stellar sources.
+- REQ-AUTOFOCUS-005: Estimate optimal focus only from enough usable, distinct focus
+  positions forming a convex curve with its minimum inside the measured range.
+- REQ-AUTOFOCUS-006: Return no optimum rather than extrapolate or report an unsupported
+  focus result.
+- REQ-AUTOFOCUS-007: Report curve fit quality, usable/rejected counts, method limitations
+  and evidence confidence.

@@ -28,3 +28,5 @@ and intends to use semantic versioning after the first release.
   its necessarily zero dispersion as perfect repeatability.
 - Fixed contact-sheet rendering for scaled unsigned-integer camera FITS using
   `BZERO`/`BSCALE`, covered by a realistic component regression test.
+- Experimental standalone autofocus-curve domain algorithm with per-frame usability,
+  hot-pixel rejection, stellar HFR and guarded quadratic optimum estimation.

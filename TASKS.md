@@ -99,6 +99,17 @@ scenarios are maintained in `docs/sprints/sprint-1.md`.
 - Acceptance: 100% planned Sprint 1 checks passed, 100% implemented Sprint 1
   requirements linked to tests, zero known critical failures; confidence index reported.
 
+### AP-010 Standalone autofocus-curve audit — P1 — In progress
+
+- Requirements: REQ-AUTOFOCUS-001..007
+- Deliverables: filter-independent per-frame usability classification, robust stellar
+  HFR measurements, guarded optimal-focus fit and explicit no-result reasons.
+- Acceptance: isolated defect pixels are rejected; synthetic stellar sweeps recover a
+  known optimum; non-convex, weak and insufficient curves never produce an optimum.
+- Tests: synthetic unit/component cases plus local-only real-sequence compatibility.
+- Current evidence: core domain algorithm and hot-pixel/known-focus tests are complete;
+  CLI/report integration and broader real stellar validation remain open.
+
 ## MVP follow-up — detailed epics, scheduling open
 
 ### AP-100 Frame quality metrics and trends — P0 — Proposed
