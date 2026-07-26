@@ -30,3 +30,5 @@ and intends to use semantic versioning after the first release.
   `BZERO`/`BSCALE`, covered by a realistic component regression test.
 - Experimental standalone autofocus-curve domain algorithm with per-frame usability,
   hot-pixel rejection, stellar HFR and guarded quadratic optimum estimation.
+- Large single-donut detection with sequence-stabilised centre, ring radius, radial
+  ring-thickness FWHM and equivalent half-flux diameter.

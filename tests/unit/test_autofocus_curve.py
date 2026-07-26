@@ -56,3 +56,25 @@ def test_hot_pixels_are_rejected_without_inventing_optimum(tmp_path: Path) -> No
     assert result.optimal_focus is None
     assert all(not frame.usable for frame in result.frames)
     assert all("PEAKS_ARE_NOT_EXTENDED_STARS" in frame.rejection_reasons for frame in result.frames)
+
+
+@pytest.mark.requirement("REQ-AUTOFOCUS-004")
+@pytest.mark.requirement("REQ-AUTOFOCUS-006")
+def test_large_single_donut_is_measured_but_flat_curve_has_no_optimum(tmp_path: Path) -> None:
+    rng = np.random.default_rng(1700)
+    yy, xx = np.mgrid[:512, :640]
+    for position in range(1688, 1714, 5):
+        image = rng.normal(200, 6, size=(512, 640))
+        radius = np.hypot(yy - 260, xx - 330)
+        image += 45 * np.exp(-((radius - 105) ** 2) / (2 * 7**2))
+        image[30, 40] = 45000
+        header = fits.Header({"FOCUSPOS": position})
+        fits.PrimaryHDU(image.astype(np.float32), header=header).writeto(
+            tmp_path / f"donut-{position}.fits"
+        )
+    result = analyse_autofocus_sequence(tmp_path)
+    assert result.optimal_focus is None
+    assert result.status == "rejected-curve"
+    assert all(frame.usable and frame.source_kind == "donut" for frame in result.frames)
+    assert all(frame.measured_stars == 1 for frame in result.frames)
+    assert all(frame.equivalent_hfd_px == pytest.approx(210, abs=20) for frame in result.frames)

@@ -17,7 +17,14 @@ The algorithm reads `FOCUSPOS`, estimates background and noise robustly, locates
 peaks above eight noise sigmas and measures spatial extent in a local aperture. A peak
 must occupy at least four significant pixels in its central 5×5 footprint; isolated
 hot/defect pixels are rejected. At least eight extended sources are required for a
-usable frame. The frame metric is median stellar half-flux radius (HFR) in pixels.
+normal multi-star frame. The frame metric is median stellar half-flux radius (HFR).
+
+A second path detects one large, low-surface-brightness defocused donut after 4× block
+averaging and difference-of-Gaussians filtering. Large connected components are
+measured using a sequence-stabilised centre and azimuthal radial profile. Reports expose
+the ring-peak radius, radial ring-thickness FWHM and equivalent half-flux diameter
+(`HFD = 2 × HFR`). One measurable donut is sufficient to make a frame usable, but not
+to make an entire curve acceptable.
 
 ## Curve acceptance
 
@@ -38,4 +45,5 @@ Otherwise the result contains explicit reasons and no optimal focus.
 - Detected extended features are not guaranteed to be stars in every scene.
 - The current fit is unweighted and has no statistically validated confidence interval.
 - Real-data validation currently demonstrates rejection of frames dominated by sensor
-  defects; a redistributable real stellar sweep is not yet available.
+  defects and detection of a late large-donut subsequence; a redistributable real
+  stellar sweep is not yet available.
