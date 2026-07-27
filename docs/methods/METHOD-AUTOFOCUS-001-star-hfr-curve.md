@@ -1,6 +1,6 @@
 # METHOD-AUTOFOCUS-001: Stellar HFR focus curve
 
-- Version: 0.2
+- Version: 0.3
 - Status: Experimental
 - Claim types: Measurement, Classification and Statistical result
 - Requirements: REQ-AUTOFOCUS-001..007
@@ -27,6 +27,11 @@ the ring-peak radius, radial ring-thickness FWHM and equivalent half-flux diamet
 (`HFD = 2 x HFR`). The detected donut is represented to the curve service as one star
 at its measured centre with this HFD value. One measurable donut is sufficient to make
 a frame usable, but not to make an entire curve acceptable.
+
+The multi-star path has precedence whenever at least eight extended local stellar
+profiles are measurable. The single-donut path is only a fallback. This prevents a
+large nebular structure in a science/control frame from replacing an otherwise valid
+stellar measurement.
 
 ## Curve acceptance
 

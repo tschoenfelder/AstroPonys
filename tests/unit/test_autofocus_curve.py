@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 from astropy.io import fits
 
-from astroponys.autofocus_curve import analyse_autofocus_sequence
+from astroponys.autofocus_curve import (
+    AutofocusFrame,
+    analyse_autofocus_sequence,
+    measure_autofocus_frame,
+)
 
 
 def write_star_field(path: Path, position: int, optimum: int = 1600) -> None:
@@ -94,3 +98,42 @@ def test_curve_service_consumes_two_times_hfr_for_stellar_frames(tmp_path: Path)
     positions = np.asarray([frame.focus_position for frame in result.frames], dtype=float)
     expected_hfd = np.asarray([frame.focus_metric_hfd_px for frame in result.frames], dtype=float)
     assert result.fit_coefficients == pytest.approx(np.polyfit(positions, expected_hfd, 2))
+
+
+@pytest.mark.requirement("REQ-AUTOFOCUS-002")
+@pytest.mark.requirement("REQ-AUTOFOCUS-006")
+def test_unmeasurable_donut_candidate_is_rejected_without_crashing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = tmp_path / "candidate.fits"
+    source.touch()
+    candidate = AutofocusFrame(
+        path=source,
+        focus_position=12000,
+        usable=False,
+        rejection_reasons=("DONUT_PROFILE_NOT_MEASURABLE",),
+        detected_peaks=0,
+        measured_stars=0,
+        median_hfr_px=None,
+        source_kind="donut",
+    )
+    monkeypatch.setattr("astroponys.autofocus_curve.measure_autofocus_frame", lambda _: candidate)
+    result = analyse_autofocus_sequence(tmp_path)
+    assert result.status == "insufficient-data"
+    assert result.optimal_focus is None
+    assert result.frames == (candidate,)
+
+
+@pytest.mark.requirement("REQ-AUTOFOCUS-004")
+def test_multi_star_measurement_takes_precedence_over_large_nebulosity(tmp_path: Path) -> None:
+    path = tmp_path / "stars-and-nebulosity.fits"
+    write_star_field(path, 1600)
+    with fits.open(path, mode="update") as hdus:
+        image = hdus[0].data
+        yy, xx = np.mgrid[: image.shape[0], : image.shape[1]]
+        radius = np.hypot(yy - 128, xx - 160)
+        image += 600 * np.exp(-((radius - 75) ** 2) / (2 * 12**2))
+    frame = measure_autofocus_frame(path)
+    assert frame.usable
+    assert frame.source_kind == "stellar"
+    assert frame.measured_stars >= 8

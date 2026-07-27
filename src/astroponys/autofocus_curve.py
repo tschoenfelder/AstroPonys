@@ -51,7 +51,14 @@ class AutofocusResult:
 def analyse_autofocus_sequence(directory: Path) -> AutofocusResult:
     paths = sorted(path for path in directory.glob("*.fits") if path.is_file())
     frames = tuple(measure_autofocus_frame(path) for path in paths)
-    donut_frames = [frame for frame in frames if frame.source_kind == "donut"]
+    donut_frames = [
+        frame
+        for frame in frames
+        if frame.source_kind == "donut"
+        and frame.center_x_px is not None
+        and frame.center_y_px is not None
+        and frame.ring_radius_px is not None
+    ]
     if donut_frames:
         rough_x = float(np.median([frame.center_x_px for frame in donut_frames]))
         rough_y = float(np.median([frame.center_y_px for frame in donut_frames]))
@@ -105,6 +112,17 @@ def measure_autofocus_frame(path: Path, minimum_stars: int = 8) -> AutofocusFram
         hfr = _stellar_hfr(image, int(y), int(x), noise)
         if hfr is not None:
             hfrs.append(hfr)
+    if len(hfrs) >= minimum_stars:
+        return AutofocusFrame(
+            path=path,
+            focus_position=position,
+            usable=position is not None and not reasons,
+            rejection_reasons=tuple(reasons),
+            detected_peaks=len(candidates),
+            measured_stars=len(hfrs),
+            median_hfr_px=float(np.median(hfrs)),
+            source_kind="stellar",
+        )
     if donut is not None:
         center_x, center_y, approximate_radius = donut
         metrics = _measure_donut_array(image, center_x, center_y, approximate_radius)
@@ -131,11 +149,10 @@ def measure_autofocus_frame(path: Path, minimum_stars: int = 8) -> AutofocusFram
         reasons.append("PEAKS_ARE_NOT_EXTENDED_STARS")
     if 0 < len(hfrs) < minimum_stars:
         reasons.append(f"TOO_FEW_MEASURABLE_STARS: {len(hfrs)} < {minimum_stars}")
-    usable = position is not None and len(hfrs) >= minimum_stars and not reasons
     return AutofocusFrame(
         path=path,
         focus_position=position,
-        usable=usable,
+        usable=False,
         rejection_reasons=tuple(reasons),
         detected_peaks=len(candidates),
         measured_stars=len(hfrs),
