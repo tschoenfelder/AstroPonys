@@ -21,4 +21,4 @@ Detailed Sprint 1 acceptance IDs are defined in `docs/sprints/sprint-1.md`.
 | REQ-RAWQA-001 | ADR-0008 | AP-011 | raw_qa: metadata and immutable synthetic FITS tests | unreleased |
 | REQ-RAWQA-002 | METHOD-RAWQA-001 | AP-011 | raw_qa: synthetic width, clipping and limits tests | unreleased |
 | REQ-RAWQA-003 | ADR-0008 | AP-011 | raw_qa_report: portable report/PNG references test | unreleased |
-| REQ-RAWQA-004 | ADR-0008 | AP-011 | raw_qa_worker and installer: subprocess and configuration tests | unreleased |
+| REQ-RAWQA-004 | ADR-0008 | AP-011 | raw_qa_worker and installer: subprocess, configuration and stdout encoding tests | unreleased |

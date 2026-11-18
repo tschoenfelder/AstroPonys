@@ -84,7 +84,7 @@ def main() -> int:
     except (ValueError, OSError) as exc:
         parser.exit(1, str(exc) + "\n")
     print("Registered Raw FITS QA." if changed else "Raw FITS QA already registered.")
-    print("Restart AstroProcess, select your dataset, then open Tools → Raw FITS QA.")
+    print("Restart AstroProcess, select your dataset, then open Raw FITS QA in the Tools menu.")
     return 0
 
 

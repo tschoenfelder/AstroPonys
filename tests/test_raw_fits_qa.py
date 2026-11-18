@@ -217,7 +217,8 @@ def test_worker_subprocess_contract(tmp_path: Path) -> None:
 
 
 @pytest.mark.requirement("REQ-RAWQA-004")
-def test_registration_cli_preserves_host_config(tmp_path: Path) -> None:
+@pytest.mark.parametrize("encoding", ["utf-8", "cp1252"])
+def test_registration_cli_preserves_host_config(tmp_path: Path, encoding: str) -> None:
     registration = Path(__file__).resolve().parents[1] / "tools/raw-fits-qa/integrate_flask.py"
     config = tmp_path / "config.toml"
     original = '[datasets.night]\npath = "C:/Astro Data"\n[jobs]\nconcurrency = 2\n'
@@ -233,11 +234,20 @@ def test_registration_cli_preserves_host_config(tmp_path: Path) -> None:
         "--tool-python",
         str(python),
     ]
-    subprocess.run(args, check=True, cwd=tmp_path, capture_output=True)
+    env = {**os.environ, "PYTHONIOENCODING": encoding}
+    proc = subprocess.run(
+        args, check=False, cwd=tmp_path, capture_output=True, encoding=encoding, env=env
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert "Registered Raw FITS QA." in proc.stdout
     once = config.read_text()
     assert once.startswith(original)
     entry = tomllib.loads(once)["tools"]["raw_fits_qa"]
     assert entry["module"] == "astroponys.raw_qa_worker"
     assert entry["python"] == python.as_posix()
-    subprocess.run(args, check=True, cwd=tmp_path, capture_output=True)
+    proc = subprocess.run(
+        args, check=False, cwd=tmp_path, capture_output=True, encoding=encoding, env=env
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert "Raw FITS QA already registered." in proc.stdout
     assert config.read_text() == once

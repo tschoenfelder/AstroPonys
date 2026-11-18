@@ -194,4 +194,5 @@ REQ-REPORT-*.
 - Acceptance: generate the chart and 1:1 links from a test dataset without network
   access or source changes. Portal launches the worker and can serve its report.
 - Verification: deterministic PSF/metadata units, synthetic FITS component tests,
-  subprocess/installer integration; Windows and offline browser acceptance pending.
+  subprocess/installer integration (including redirected Windows-1252 stdout),
+  Windows CI and offline browser acceptance.
