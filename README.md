@@ -32,7 +32,7 @@ setup script uses the `py` launcher. Run the commands from the indicated
 checkout directory. Each setup creates or reuses a separate virtual environment.
 If testing an unmerged pull request, switch to its branch before running setup.
 
-### Install on Windows (PowerShell)
+### First-time install on Windows (PowerShell)
 
 From a folder where you keep your tools:
 
@@ -42,13 +42,34 @@ cd AstroPonys
 .\tools\raw-fits-qa\setup.cmd
 ```
 
-### Install on Linux
+### First-time install on Linux
 
 ```sh
 git clone https://github.com/tschoenfelder/AstroPonys.git
 cd AstroPonys
 sh tools/raw-fits-qa/setup.sh
 ```
+
+### Update an existing checkout
+
+If you already have an `AstroPonys` checkout, skip `git clone`. Open a
+terminal in that checkout and update it:
+
+```sh
+git remote get-url origin
+git status --short
+git switch main
+git pull --ff-only origin main
+```
+
+Check that `origin` points to `tschoenfelder/AstroPonys` and that there are no
+local changes you need to save before switching branches. If Git reports
+local changes or a diverged branch, stop and review them instead of forcing
+the update. If the folder is not a Git checkout, leave it intact and clone
+into a different directory.
+
+After updating, rerun only the setup command for your platform from inside
+the existing checkout. The setup script reuses the tool's virtual environment.
 
 ### Run in the AstroProcess web portal
 
