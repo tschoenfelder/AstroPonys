@@ -185,3 +185,14 @@ REQ-REPORT-*.
 - v0.3.x: optical-train/master/sensor/trail audits and unified reporting.
 - v0.4.x: Ekos/log integration and multi-night catalogue.
 - v0.5+: calibrated processing, mosaics and optional UI/presentation branch.
+
+### AP-011 Raw FITS QA web report and worker — P1 — In review
+
+- Requirements: REQ-RAWQA-001..004. Design: ADR-0008; method: METHOD-RAWQA-001.
+- Deliverables: read-only scan, stellar QA report, independent tool environment,
+  AstroProcess registration script, and portable report UI.
+- Acceptance: generate the chart and 1:1 links from a test dataset without network
+  access or source changes. Portal launches the worker and can serve its report.
+- Verification: deterministic PSF/metadata units, synthetic FITS component tests,
+  subprocess/installer integration (including redirected Windows-1252 stdout),
+  Windows CI and offline browser acceptance.

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AstroProcess • Raw FITS QA</title>
+<style>
+:root{font:16px system-ui;color:#14283d;background:#f3f6fa}
+body{max-width:1220px;margin:2rem auto;padding:0 1rem}
+section{background:white;border:1px solid #ccd9e6;border-radius:12px;padding:1rem;margin:1rem 0}
+h1,h2{margin:.1rem 0 .6rem}p{margin:.5rem 0}.filters{display:flex;flex-wrap:wrap;gap:.8rem;align-items:end}
+label{display:grid;font-size:.9rem;gap:.2rem}select,button{font:inherit;padding:.4rem;border:1px solid #8399ae;border-radius:5px;background:white;color:inherit}
+summary,button{cursor:pointer}input,select{max-width:100%}button:focus-visible,select:focus-visible,circle:focus{outline:2px solid #d97706}
+#group{max-width:min(80vw,32em)}#chart{display:block;width:100%;height:auto;min-height:220px}
+table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{border-bottom:1px solid #dbe5ee;text-align:left;padding:.4rem;overflow-wrap:anywhere}
+#inventory,#viewport{overflow:auto}#viewport{max-height:66vh;background:#101820}#imageboard{position:relative;width:max-content}
+#imageboard img{display:block;max-width:none;image-rendering:pixelated}.marker{position:absolute;transform:translate(-50%,-50%);border:2px solid #73eddf;border-radius:50%;height:18px;width:18px;text-align:center;color:white;text-shadow:0 1px #000;font-size:.8rem;pointer-events:none}
+.marker.selected{border-color:#ff8b1f;height:26px;width:26px}.minor{color:#3e5770}
+</style></head>
+<body>
+<header><p class="minor">AstroProcess / acquisition review</p><h1>Raw FITS quality</h1><p id="summary"></p></header>
+<section><h2>FWHM versus peak ADU</h2>
+<p>One point per usable unclipped star, up to five per FITS. Select a point to inspect the source at 1:1.</p>
+<div class="filters"><label>Camera / binning / readout<select id="group"></select></label>
+<label>Filter<select id="filter"></select></label><label>Exposure<select id="exposure"></select></label>
+<label>Session / night<select id="session"></select></label><label>Frame role<select id="role"></select></label>
+<label>FWHM unit<select id="unit"><option value="px">Pixels</option><option value="arcsec">Arcseconds</option></select></label>
+<button id="export" type="button">Export plot as PNG</button></div>
+<div id="chartRoot"><svg id="chart" width="850" height="390" viewBox="0 0 850 390" aria-label="Scatter plot of stellar FWHM versus peak ADU"></svg></div>
+<p id="plotnote" class="minor"></p><p id="point" aria-live="polite"></p></section>
+<section id="inspect" hidden><h2>1:1 sensor view</h2><p id="inspectname"></p>
+<p class="minor">One source pixel per CSS pixel at browser zoom 100%. Display stretch only. Coordinates are zero-based in FITS array order.</p>
+<div id="viewport"><div id="imageboard"></div></div></section>
+<section><details open><summary>Frames and measurement status</summary><div id="inventory"><table>
+<thead><tr><th>FITS</th><th>Role / status</th><th>Exposure</th><th>Clipped stars</th><th>Measured</th><th>Warnings</th></tr></thead>
+<tbody id="frames"></tbody></table></div></details></section>
+<script type="application/json" id="qa-data">__RAW_QA_DATA__</script>
+<script>
+"use strict";
+const frames = JSON.parse(document.getElementById('qa-data').textContent);
+const $ = (id) => document.getElementById(id);
+const val = (v) => v === null || v === undefined || v === '' ? 'Unknown' : String(v);
+const number = (v, digits = 2) => Number.isFinite(v) ? v.toFixed(digits) : 'Unknown';
+const groupingKeys = ['camera','bin_x','bin_y','bin_mode','gain_mode','readout_mode','gain','offset'];
+function group(f) {
+  const m = f.metadata;
+  return groupingKeys.map(k => val(m[k])).join(' / ');
+}
+const list = frames.filter(f => f.metadata.frame_type === 'light');
+$('summary').textContent = frames.length+' unique FITS · '+list.length+' Lights · '+list.filter(f => f.stars.length).length+' with usable measurements';
+function select(id, items, all = true) {
+  const node = $(id);
+  if(all) node.add(new Option('All', ''));
+  for (const item of [...new Set(items)].sort((a,b) => a.localeCompare(b,undefined,{numeric:true}))) node.add(new Option(item,item));
+}
+select('group',list.map(group),false);
+select('filter',list.map(f=>val(f.metadata.filter_name)));
+select('exposure',list.map(f=>val(f.metadata.exposure_seconds)));
+select('session',list.map(f=>val(f.metadata.session)));
+select('role',list.map(f=>val(f.metadata.frame_role)));
+const svg = $('chart'), ns = 'http://www.w3.org/2000/svg';
+function el(name, attrs, content) {
+  const node=document.createElementNS(ns,name);
+  for(const [k,v] of Object.entries(attrs)) node.setAttribute(k,String(v));
+  if(content!==undefined) node.textContent=content;
+  svg.append(node); return node;
+}
+function txt(x,y,t,anchor='middle',size=12) {return el('text',{x,y,'text-anchor':anchor,'font-size':size,fill:'#233c54','font-family':'system-ui, sans-serif'},t);}
+function line(x1,y1,x2,y2,stroke,extra={}) {return el('line',{x1,y1,x2,y2,stroke,...extra});}
+function clipped(f){return f.clipped_stars===null?'Unknown':String(f.clipped_stars);}
+function info(f,s){
+  return f.relative_path+' · star '+s.id+' · peak '+number(s.peak_adu,1)+' ADU · FWHM '+number(s.fwhm_px)+' px / '+number(s.fwhm_arcsec)+' arcsec · '+val(f.metadata.exposure_seconds)+' s · '+val(f.metadata.filter_name)+' · clipped stars: '+clipped(f);
+}
+function inspect(f,star){
+  $('inspect').hidden=false;
+  $('inspectname').textContent=f.relative_path+(star?' · Selected star '+star.id:'');
+  const board=$('imageboard'); board.replaceChildren();
+  const im=new Image(); im.src=f.preview;im.alt=f.relative_path;
+  board.append(im);
+  let focused=null;
+  for(const s of f.stars){
+    const mark=document.createElement('span');
+    mark.className='marker'+(star&&s.id===star.id?' selected':'');
+    mark.style.left=((s.x+.5)/f.width*100)+'%';mark.style.top=((s.y+.5)/f.height*100)+'%';
+    mark.textContent=s.id;board.append(mark);
+    if(star&&s.id===star.id) focused=mark;
+  }
+  if(star){
+    const center=()=>{$('viewport').scrollLeft=Math.max(0,star.x-$('viewport').clientWidth/2);
+      $('viewport').scrollTop=Math.max(0,star.y-$('viewport').clientHeight/2);};
+    im.addEventListener('load',center,{once:true});if(im.complete) center();
+    if(focused) focused.title=info(f,star);
+  }
+  $('inspect').scrollIntoView({block:'start'});
+}
+function render(){
+  const selected=list.filter(f=>group(f)===$('group').value &&
+    [['filter','filter_name'],['session','session'],['exposure','exposure_seconds'],['role','frame_role']]
+      .every(([id,key])=>!$(id).value||val(f.metadata[key])===$(id).value));
+  const unit=$('unit').value, key='fwhm_'+unit;
+  const all=selected.flatMap(f=>f.stars.map(s=>({f,s})));
+  const points=all.filter(({s})=>Number.isFinite(s[key]));
+  const ceilings=[...new Set(selected.map(f=>f.ceiling_adu))];
+  const ceiling=ceilings.length===1 && Number.isFinite(ceilings[0]) ? ceilings[0] : null;
+  svg.replaceChildren();el('rect',{width:850,height:390,fill:'white'});
+  txt(76,27,'Stellar FWHM vs. peak ADU','start',17);
+  txt(76,46,$('group').value || 'No camera group','start',10);
+  if(!points.length){
+    txt(420,185,'No measurable stars for the selected filters.');
+    $('plotnote').textContent='No values available in '+unit+'.'; $('export').disabled=true;return;
+  }
+  $('export').disabled=false;
+  const xmax=points.reduce((m,p)=>Math.max(m,p.s.peak_adu),Math.max(ceiling||0,1))*1.06;
+  const ymax=points.reduce((m,p)=>Math.max(m,p.s[key]),.1)*1.12;
+  const fx=x=>76+704*x/xmax, fy=y=>332-265*y/ymax;
+  for(let n=0;n<=5;n++){
+    const xx=xmax*n/5, yy=ymax*n/5;
+    line(fx(xx),67,fx(xx),332,'#e3eaf1');line(76,fy(yy),780,fy(yy),'#e3eaf1');
+    txt(fx(xx),351,Number(xx.toPrecision(3)).toLocaleString());
+    txt(66,fy(yy)+4,number(yy),'end');
+  }
+  line(76,67,76,332,'#64788b');line(76,332,780,332,'#64788b');
+  txt(428,377,'Peak ADU');const ylabel=txt(20,200,'FWHM ('+unit+')');ylabel.setAttribute('transform','rotate(-90 20 200)');
+  if(ceiling!==null){
+    line(fx(ceiling),67,fx(ceiling),332,'#a35839',{'stroke-dasharray':'4 4'});
+    txt(fx(ceiling)-4,79,'Clipping '+ceiling.toLocaleString()+' ADU','end',10);
+  }
+  for(const {f,s} of points){
+    const c=el('circle',{cx:fx(s.peak_adu),cy:fy(s[key]),r:4,fill:f.metadata.frame_role==='autofocus'?'#a9522a':'#087f8c','fill-opacity':.78,stroke:'#fff','stroke-width':.6,tabindex:0,role:'button','aria-label':info(f,s)});
+    const t=document.createElementNS(ns,'title');t.textContent=info(f,s);c.append(t);
+    c.onfocus=c.onpointerenter=()=>$('point').textContent=info(f,s);
+    c.onclick=()=>inspect(f,s);
+    c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspect(f,s);}};
+  }
+  $('plotnote').textContent=points.length+' measurements from '+selected.length+' Lights'+(all.length>points.length?' · '+(all.length-points.length)+' without angular scale':'')+' · Autofocus points are orange.';
+}
+for(const id of ['group','filter','exposure','session','role','unit']) $(id).onchange=()=>{$('point').textContent='';render();};
+$('export').onclick=()=>{
+  const blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob), im=new Image();
+  im.onload=()=>{const cv=document.createElement('canvas');cv.width=1700;cv.height=780;
+    cv.getContext('2d').drawImage(im,0,0,1700,780);URL.revokeObjectURL(url);
+    const link=document.createElement('a');link.download='fwhm-vs-peak-adu.png';link.href=cv.toDataURL('image/png');link.click();};
+  im.onerror=()=>{URL.revokeObjectURL(url);$('point').textContent='PNG export failed in this browser.';};
+  im.src=url;
+};
+for(const f of frames){
+  const tr=$('frames').insertRow(), name=tr.insertCell();
+  if(f.preview){const btn=document.createElement('button');btn.type='button';btn.textContent=f.relative_path;
+    btn.onclick=()=>inspect(f);name.append(btn);}
+  else name.textContent=f.relative_path;
+  for(const text of [f.metadata.frame_role+' / '+f.status,val(f.metadata.exposure_seconds),
+                      clipped(f),f.stars.length,f.warnings.join(' · ')]) tr.insertCell().textContent=text;
+}
+render();
+</script></body></html>
