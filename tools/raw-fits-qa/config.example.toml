@@ -1,0 +1,13 @@
+# Copy to ~/.astroprocess/raw-fits-qa/config.toml only if you need user defaults.
+# dataset = "E:/Astro/raw/Night"
+# output_root = "E:/Astro/astroponys-output"
+recursive = true
+
+# Add a rule only after verifying the ADU ceiling for this camera/setting.
+# [[clipping]]
+# camera = "ZWO CCD ASI1600MM Pro"
+# bin_x = 2
+# bin_y = 2
+# gain = 200
+# offset = 50
+# ceiling_adu = 65504

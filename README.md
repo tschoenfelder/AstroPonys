@@ -59,3 +59,11 @@ run with warnings, and 1 means failure.
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
+
+## Raw FITS QA
+
+Raw FITS QA is the first, read-only step after acquisition. It writes an
+interactive FWHM versus peak ADU report and native-grid 1:1 previews, with no
+scientific FITS copies or sorting decisions.
+
+See [setup, standalone use, and AstroProcess integration](tools/raw-fits-qa/README.md).

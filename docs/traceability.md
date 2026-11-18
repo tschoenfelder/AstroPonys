@@ -18,3 +18,7 @@ Detailed Sprint 1 acceptance IDs are defined in `docs/sprints/sprint-1.md`.
 | REQ-PLATFORM-001..004 | ADR-0006 | AP-001 | Windows 3.13 gate + wheel install audit | v0.1.0 |
 | REQ-SCI-001..006 | ADR-0004 | AP-001, AP-004..006, AP-009 | unit + release audit | v0.1.0 |
 | REQ-AUTOFOCUS-001..008 | ADR-0007, METHOD-AUTOFOCUS-001 | AP-010 | synthetic unit + private compatibility | v0.1.0 |
+| REQ-RAWQA-001 | ADR-0008 | AP-011 | raw_qa: metadata and immutable synthetic FITS tests | unreleased |
+| REQ-RAWQA-002 | METHOD-RAWQA-001 | AP-011 | raw_qa: synthetic width, clipping and limits tests | unreleased |
+| REQ-RAWQA-003 | ADR-0008 | AP-011 | raw_qa_report: portable report/PNG references test | unreleased |
+| REQ-RAWQA-004 | ADR-0008 | AP-011 | raw_qa_worker and installer: subprocess and configuration tests | unreleased |

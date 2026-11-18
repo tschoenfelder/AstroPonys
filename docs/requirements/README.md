@@ -104,3 +104,18 @@ and must be expanded before their tasks become Ready.
 - REQ-AUTOFOCUS-008: Normalize every accepted stellar or donut measurement to
   `HFD = 2 x HFR` before passing per-frame values to the focus-curve fit, while
   preserving the detected source centre and source type.
+
+## Raw FITS QA
+
+- REQ-RAWQA-001: Scan raw Lights read-only; distinguish autofocus, science/unknown and
+  non-Light frames. Record header-first metadata, explicitly sourced path fallbacks,
+  input identity and incomplete measurements.
+- REQ-RAWQA-002: Count distinct clipped stellar sources only when the configuration
+  ceiling is known. Rank up to five usable unclipped stars by net flux and record native
+  positions, peak ADU, both fitted FWHM axes and angular widths when scale is known.
+- REQ-RAWQA-003: Emit a portable interactive scatter plot, linked 1:1 sensor views,
+  and PNG chart export. Separate camera, binning and readout/gain groups and allow
+  filtering by session, filter and exposure. Repeated FITS content yields one set of points.
+- REQ-RAWQA-004: Provide a portable standalone CLI and an AstroProcess v1 worker in
+  a tool-specific venv. Integrate using registered configuration rather than importing
+  FITS analysis into the Flask process. Emit progress and an immutable result manifest.

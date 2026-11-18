@@ -7,6 +7,8 @@ and intends to use semantic versioning after the first release.
 
 ### Added
 
+- Raw FITS QA worker, portable FWHM/ADU report and AstroProcess registration.
+
 - Normalized stellar and donut focus-curve inputs to HFD (`2 x HFR`) while retaining
   the detected centre and source classification for every frame.
 
